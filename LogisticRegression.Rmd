@@ -1,0 +1,35 @@
+---
+title: "LogisticRegression"
+output: pdf_document
+date: "2023-06-10"
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+## R Markdown
+
+This is an R Markdown document. Markdown is a simple formatting syntax for authoring HTML, PDF, and MS Word documents. For more details on using R Markdown see <http://rmarkdown.rstudio.com>.
+
+When you click the **Knit** button a document will be generated that includes both content as well as the output of any embedded R code chunks within the document. You can embed an R code chunk like this:
+
+```{r}
+install.packages("googlesheets4")
+library(googlesheets4)
+gs4_auth()
+spreadsheet_url <-
+  "https://docs.google.com/spreadsheets/d/1WswKAsgm_ztBjJadLe9bfwTEH1TJvemIm1ZEitLTqlw/edit#gid=0"
+sheet_data <- gs4_get(spreadsheet_url)
+sheet1_data <- read_sheet(sheet_data, sheet = 1)
+sheet1_data
+sheet1_data$winner <-
+  ifelse(sheet1_data$"Winner UTR" > sheet1_data$"Loser UTR", 1, 0)
+sheet1_data$diff <-
+  abs(sheet1_data$"Winner UTR"-sheet1_data$"Loser UTR")
+model <-
+  glm(sheet1_data$winner ~ sheet1_data$diff - 1, family = "binomial")
+summary(model)
+coefficients <- coef(model)
+```
+
